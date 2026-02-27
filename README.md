@@ -30,19 +30,19 @@ Name: team2-igw
               private_a (us-east-1a)
               private_b (us-east-1b)
 
-5. Basic Security Groups
+ 5. Basic Security Groups
 
-🔹 ALB Security Group (8번)
-    Name: team2-alb-sg
-    Ingress:
-     80 from 0.0.0.0/0
-     (Optional: 443 if TLS ticket adds ACM later)
-    Egress:
-      All traffic allowed
+       🔹 ALB Security Group (8번)
+           Name: team2-alb-sg
+               Ingress:
+                  80 from 0.0.0.0/0
+                  (Optional: 443 if TLS ticket adds ACM later)
+               Egress:
+                  All traffic allowed
 
-🔹 RDS Security Group
-    Name: team2-rds-sg
-    Currently minimal (rules to be refined in RDS ticket)
+       🔹 RDS Security Group
+           Name: team2-rds-sg
+               Currently minimal (rules to be refined in RDS ticket)
 
 🔎 Notes
 
