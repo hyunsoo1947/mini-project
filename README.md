@@ -31,6 +31,7 @@ Name: team2-igw
               private_b (us-east-1b)
 
 5. Basic Security Groups
+
 🔹 ALB Security Group (8번)
     Name: team2-alb-sg
     Ingress:
