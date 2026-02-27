@@ -1,6 +1,4 @@
-############################################
-# VPC
-############################################
+# [1]. VPC
 resource "aws_vpc" "main" {
   cidr_block = var.vpc_cidr
 
@@ -9,9 +7,7 @@ resource "aws_vpc" "main" {
   }
 }
 
-############################################
-# Internet Gateway (Public only)
-############################################
+# [2]. Internet Gateway (Public only)
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
@@ -20,10 +16,8 @@ resource "aws_internet_gateway" "main" {
   }
 }
 
-############################################
-# Route Tables
-############################################
-# Public Route Table: 0.0.0.0/0 -> IGW
+# [3]. Route Tables
+#  1. Public Route Table
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
@@ -38,7 +32,7 @@ resource "aws_route" "public_internet" {
   gateway_id             = aws_internet_gateway.main.id
 }
 
-# Private Route Table: NO default internet route (No NAT Gateway)
+#   2. Private Route Table: NO internet route, No NAT Gateway
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
@@ -47,9 +41,7 @@ resource "aws_route_table" "private" {
   }
 }
 
-############################################
-# Subnets (2 Public / 2 Private)
-############################################
+# [4]. Subnets (2 Public / 2 Private)
 resource "aws_subnet" "public_a" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = var.public_subnet_a_cidr
@@ -82,9 +74,7 @@ resource "aws_subnet" "private_b" {
   tags = { Name = "team2-private-b" }
 }
 
-############################################
-# Route Table Associations
-############################################
+# [5]. Route Table Associations
 resource "aws_route_table_association" "public_a" {
   subnet_id      = aws_subnet.public_a.id
   route_table_id = aws_route_table.public.id
@@ -105,10 +95,8 @@ resource "aws_route_table_association" "private_b" {
   route_table_id = aws_route_table.private.id
 }
 
-############################################
-# Security Groups
-############################################
-# (8) ALB Security Group
+# [6]. Security Groups
+#   1. ALB Security Group
 resource "aws_security_group" "alb_sg" {
   name        = "team2-alb-sg"
   description = "ALB SG: allow HTTP from the internet"
@@ -122,15 +110,6 @@ resource "aws_security_group" "alb_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Optional: enable later when TLS/ACM ticket is implemented
-  # ingress {
-  #   description = "HTTPS"
-  #   from_port   = 443
-  #   to_port     = 443
-  #   protocol    = "tcp"
-  #   cidr_blocks = ["0.0.0.0/0"]
-  # }
-
   egress {
     from_port   = 0
     to_port     = 0
@@ -141,13 +120,12 @@ resource "aws_security_group" "alb_sg" {
   tags = { Name = "team2-alb-sg" }
 }
 
-# RDS Security Group (placeholder; RDS ticket can refine ingress later)
+#    2. RDS Security Group ( RDS ticket can put ingress later)
 resource "aws_security_group" "rds_sg" {
   name        = "team2-rds-sg"
   description = "RDS SG placeholder (refine in RDS ticket)"
   vpc_id      = aws_vpc.main.id
 
-  # Keep minimal here to avoid stepping into the RDS ticket scope.
   egress {
     from_port   = 0
     to_port     = 0
@@ -157,3 +135,4 @@ resource "aws_security_group" "rds_sg" {
 
   tags = { Name = "team2-rds-sg" }
 }
+# EC2 Security Group put later
